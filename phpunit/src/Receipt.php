@@ -46,5 +46,17 @@ class Receipt {
         return $subtotal + $this->getTax($subtotal, $tax);
     }
 
+    /**
+     * Round the input to the nearest hundredth
+     * @param $input float
+     * @return float
+     */
+    public function currencyAmt($input)
+    {
+        // Round to the nearest hundredth...
+        return round($input, 2);
+    }
+
+
 
 }

@@ -127,4 +127,34 @@ class ReceiptTest extends TestCase {
         $result = $receipt->postTaxTotal([1,2,5,8], 0.20, null); // params: Items[], taxTotal, Coupon
         $this->assertEquals(11.00, $result);
     }
+
+    /**
+     * @dataProvider provideCurrencyAmount
+     * @param $input
+     * @param $expected
+     * @param $msg
+     * @return void
+     */
+    public function testCurrencyAmount($input, $expected, $msg)
+    {
+        $this->assertSame(
+            $expected,
+            $this->Receipt->currencyAmt($input),
+            $msg
+        );
+    }
+
+    /**
+     * Data provider method for the testCurrencyAmount() method...
+     * @return array[]
+     */
+    public function provideCurrencyAmount()
+    {
+        return [
+            [1, 1.00, '1 should be transformed into 1.00'],
+            [1.1, 1.10, '1.1 should be transformed into 1.10'],
+            [1.11, 1.11, '1.11 should remain as 1.11'],
+            [1.111, 1.11, '1.111 should be transformed into 1.11'],
+        ];
+    }
 }
