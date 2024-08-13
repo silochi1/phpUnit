@@ -6,7 +6,7 @@ namespace TDD\Test;
 // - This will allow us to use the PHPUnit Framework
 require dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-// Import PHPUnit's TestCase Class
+// Import PHPUnit's TestCase Core Class
 use PHPUnit\Framework\TestCase;
 use TDD\Receipt; // Namespace of Code to test
 
@@ -26,13 +26,27 @@ class ReceiptTest extends TestCase {
 
     public function testGetTotal() {
         $input = [0,2,5,8];
-        $output = $this->Receipt->getTotal($input); // Execute getTotal() method from Receipt class
+        $coupon = null;
+        $output = $this->Receipt->getTotal($input, $coupon); // Execute getTotal() method from Receipt class
 
         // Assertion for testing | Read more on phpunit documentaiton
         $this->assertEquals(
             15, // Expected value
             $output, // Actual Value
             'When summing, the total should equal 15' // Message to show if error received
+        );
+    }
+
+    public function testGetTotalAndCoupon() {
+        $input = [0,2,5,8];
+        $coupon = 0.20;
+        $output = $this->Receipt->getTotal($input, $coupon); // Execute getTotal() method from Receipt class
+
+        // Assertion for testing | Read more on phpunit documentaiton
+        $this->assertEquals(
+            12, // Expected value
+            $output, // Actual Value
+            'When summing, the total should equal 12' // Message to show if error received
         );
     }
 
