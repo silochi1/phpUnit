@@ -29,8 +29,8 @@ class Receipt {
      * @param $tax
      * @return float|int
      */
-    public function getTax($amount, $tax) {
-        return ($amount * $tax);
+    public function getTax($amount) {
+        return ($amount * $this->tax);
     }
 
 
@@ -41,9 +41,9 @@ class Receipt {
      * @param $coupon
      * @return float|int
      */
-    public function postTaxTotal($items = [], $tax, $coupon) {
+    public function postTaxTotal($items = [], $coupon) {
         $subtotal = $this->getSubTotal($items, $coupon);
-        return $subtotal + $this->getTax($subtotal, $tax);
+        return $subtotal + $this->getTax($subtotal);
     }
 
     /**

@@ -84,9 +84,12 @@ class ReceiptTest extends TestCase {
 
     public function testGetTax() {
         $inputAmount = 10.00;
-        $taxInput   = 0.10; // Percentage to be taxed
 
-        $output = $this->Receipt->getTax($inputAmount, $taxInput);
+        // Dynamically add the property 'tax' to the instance of the 'Receipt' class
+        // - No need to define explicitly in the class...
+        $this->Receipt->tax   = 0.10; // Percentage to be taxed
+
+        $output = $this->Receipt->getTax($inputAmount);
 
         $this->assertEquals(
             1.00, // Expected value
@@ -120,11 +123,11 @@ class ReceiptTest extends TestCase {
         // - We only expect to call the getTax() method once
         $receipt->expects($this->once())
             ->method('getTax')
-            ->with(10.00, $taxAmount) // Specify params...
+            ->with(10.00) // Specify params...
             ->will($this->returnValue('1.00'));
 
         // Value assertion...
-        $result = $receipt->postTaxTotal([1,2,5,8], 0.20, null); // params: Items[], taxTotal, Coupon
+        $result = $receipt->postTaxTotal([1,2,5,8], null); // params: Items[], taxTotal, Coupon
         $this->assertEquals(11.00, $result);
     }
 
