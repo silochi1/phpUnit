@@ -24,19 +24,38 @@ class ReceiptTest extends TestCase {
         unset($this->Receipt);
     }
 
-    public function testGetTotal() {
+
+    /**
+     * @dataProvider provideTotal
+     * @return void
+     */
+    public function testGetTotal($items, $expected) {
         $input = [0,2,5,8];
         $coupon = null;
-        $output = $this->Receipt->getTotal($input, $coupon); // Execute getTotal() method from Receipt class
+        $output = $this->Receipt->getTotal($items, $coupon); // Execute getTotal() method from Receipt class
 
         // Assertion for testing | Read more on phpunit documentaiton
         $this->assertEquals(
-            15, // Expected value
+            $expected, // Expected value
             $output, // Actual Value
-            'When summing, the total should equal 15' // Message to show if error received
+            "When summing, the total should equal $expected" // Message to show if error received
         );
     }
 
+    public function provideTotal()
+    {
+        return [
+            // (i.e.) [[inputs], outputValue]
+            'ints totaling 16' => [[1, 2, 5, 8], 16], // Test Data 1.
+            [[-1, 2, 5, 8], 14], // Test Data 2.
+            [[1, 2, 8], 11] // Test Data 3.
+        ];
+    }
+
+    /**
+     * Test that the correct sum is calculated from the total & coupon
+     * @return void
+     */
     public function testGetTotalAndCoupon() {
         $input = [0,2,5,8];
         $coupon = 0.20;
@@ -48,6 +67,19 @@ class ReceiptTest extends TestCase {
             $output, // Actual Value
             'When summing, the total should equal 12' // Message to show if error received
         );
+    }
+
+    /**
+     * Test to see that the correct exception is thrown when an invalid coupon is provided
+     * @return void
+     */
+    public function testGetTotalAndCouponException() {
+        $input = [0,2,5,8];
+        $coupon = 1.20;
+
+        // Assertion that an exception was thrown...
+        $this->expectException('BadMethodCallException');
+        $this->Receipt->getTotal($input, $coupon);
     }
 
     public function testGetTax() {
@@ -65,6 +97,12 @@ class ReceiptTest extends TestCase {
 
     // Mock Example
     public function testPostTaxTotal() {
+        // Dummy data...
+        $items = [1,2,5,8];
+        $taxAmount = 0.20;
+        $coupon = null;
+
+
         // Build the Mock:
         // - Specify class and methods to use...
         $receipt = $this->getMockBuilder('TDD\Receipt')
@@ -72,11 +110,17 @@ class ReceiptTest extends TestCase {
             ->getMock();
 
         // We expect the getTotal() method to return a value of 10.00...
-        $receipt->method('getTotal')
+        // - We only expect to call the getTotal() method once
+        $receipt->expects($this->once())
+            ->method('getTotal')
+            ->with($items, $coupon) // Specify params...
             ->will($this->returnValue(10.00));
 
         // We expect the getTax() method to return a value of 1.00...
-        $receipt->method('getTax')
+        // - We only expect to call the getTax() method once
+        $receipt->expects($this->once())
+            ->method('getTax')
+            ->with(10.00, $taxAmount) // Specify params...
             ->will($this->returnValue('1.00'));
 
         // Value assertion...

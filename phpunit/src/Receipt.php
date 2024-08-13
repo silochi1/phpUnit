@@ -2,6 +2,7 @@
 
 namespace TDD;
 
+use \BadMethodCallException;
 class Receipt {
     /**
      * Returns the sum of items in an array
@@ -10,6 +11,10 @@ class Receipt {
      */
     public function getTotal(array $items = [], $coupon = null) {
         $sum = array_sum($items);
+
+        if ($coupon > 1.00) {
+            throw new BadMethodCallException('The coupon cannot be greater than 1.00.');
+        }
 
         // If a coupon exists, apply it to the sum...
         if(!is_null($coupon)) {
