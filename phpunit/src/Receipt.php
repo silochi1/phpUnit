@@ -9,7 +9,7 @@ class Receipt {
      * - Also applies coupon discount; if available
      * @return double|int
      */
-    public function getTotal(array $items = [], $coupon = null) {
+    public function getSubTotal(array $items = [], $coupon = null) {
         $sum = array_sum($items);
 
         if ($coupon > 1.00) {
@@ -42,7 +42,7 @@ class Receipt {
      * @return float|int
      */
     public function postTaxTotal($items = [], $tax, $coupon) {
-        $subtotal = $this->getTotal($items, $coupon);
+        $subtotal = $this->getSubTotal($items, $coupon);
         return $subtotal + $this->getTax($subtotal, $tax);
     }
 
