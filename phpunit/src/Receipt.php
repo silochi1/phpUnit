@@ -4,6 +4,12 @@ namespace TDD;
 
 use \BadMethodCallException;
 class Receipt {
+
+    public function __construct($formatter)
+    {
+        $this->Formatter = $formatter;
+    }
+
     /**
      * Returns the sum of items in an array
      * - Also applies coupon discount; if available
@@ -30,7 +36,7 @@ class Receipt {
      * @return float|int
      */
     public function getTax($amount) {
-        return ($amount * $this->tax);
+        return $this->Formatter->currencyAmt($amount * $this->tax);
     }
 
 
@@ -45,18 +51,5 @@ class Receipt {
         $subtotal = $this->getSubTotal($items, $coupon);
         return $subtotal + $this->getTax($subtotal);
     }
-
-    /**
-     * Round the input to the nearest hundredth
-     * @param $input float
-     * @return float
-     */
-    public function currencyAmt($input)
-    {
-        // Round to the nearest hundredth...
-        return round($input, 2);
-    }
-
-
 
 }

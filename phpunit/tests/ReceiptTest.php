@@ -15,7 +15,18 @@ class ReceiptTest extends TestCase {
 
     public function setUp() {
         // Create an isolated object to test
-        $this->Receipt = new Receipt();
+
+        $this->Formatter = $this->getMockBuilder('TDD\Formatter')
+            ->setMethods(['currencyAmt'])
+            ->getMock();
+
+        // Expected to be called any number of times...
+        $this->Formatter->expects($this->any())
+            ->method('currencyAmt')
+            ->with($this->anything())
+            ->will($this->returnArgument(0));
+
+        $this->Receipt = new Receipt($this->Formatter);
     }
 
     public function tearDown() {
@@ -110,6 +121,7 @@ class ReceiptTest extends TestCase {
         // - Specify class and methods to use...
         $receipt = $this->getMockBuilder('TDD\Receipt')
             ->setMethods(['getTax', 'getSubTotal'])
+            ->setConstructorArgs([$this->Formatter])
             ->getMock();
 
         // We expect the getTotal() method to return a value of 10.00...
@@ -129,35 +141,5 @@ class ReceiptTest extends TestCase {
         // Value assertion...
         $result = $receipt->postTaxTotal([1,2,5,8], null); // params: Items[], taxTotal, Coupon
         $this->assertEquals(11.00, $result);
-    }
-
-    /**
-     * @dataProvider provideCurrencyAmount
-     * @param $input
-     * @param $expected
-     * @param $msg
-     * @return void
-     */
-    public function testCurrencyAmount($input, $expected, $msg)
-    {
-        $this->assertSame(
-            $expected,
-            $this->Receipt->currencyAmt($input),
-            $msg
-        );
-    }
-
-    /**
-     * Data provider method for the testCurrencyAmount() method...
-     * @return array[]
-     */
-    public function provideCurrencyAmount()
-    {
-        return [
-            [1, 1.00, '1 should be transformed into 1.00'],
-            [1.1, 1.10, '1.1 should be transformed into 1.10'],
-            [1.11, 1.11, '1.11 should remain as 1.11'],
-            [1.111, 1.11, '1.111 should be transformed into 1.11'],
-        ];
     }
 }
